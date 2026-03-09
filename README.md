@@ -94,6 +94,14 @@ cd edmunds-claude-code
 
 ## Usage Examples
 
+## Quick Paths (Avoid Cognitive Overload)
+
+Start with one path instead of all commands at once:
+
+- **Building a Python API**: `/api-new` → `/api-protect` → `/api-test`
+- **Improving code quality**: `/code-cleanup` → `/lint`
+- **Planning and research**: `/feature-plan` + `tech-stack-researcher`
+
 ### Planning a Feature
 
 ```bash
@@ -130,6 +138,18 @@ This setup emphasizes:
 
 - Claude Code 2.0.13+
 - Works with any project (optimized for Next.js + Supabase)
+
+## Quality Gate (Python)
+
+Run these checks locally before pushing changes:
+
+```bash
+uv sync --group dev
+uv run ruff format --check .
+uv run ruff check .
+uv run mypy .
+```
+
 
 ## Customization
 

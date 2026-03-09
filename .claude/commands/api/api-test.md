@@ -1,116 +1,47 @@
 ---
-description: Test API endpoints with automated test generation
+description: Generate maintainable API tests (Python-first, async-ready)
 model: claude-sonnet-4-5
 ---
 
-Generate comprehensive API tests for the specified endpoint.
+Generate comprehensive API tests for the endpoint below.
 
 ## Target
 
 $ARGUMENTS
 
-## Test Strategy for Solo Developers
+## Framework Selection Rules
 
-Create practical, maintainable tests using modern tools:
+1. If project is Python, default to `pytest`.
+2. For async APIs, use `pytest-asyncio` + `httpx.AsyncClient`.
+3. Only use JS tooling (Vitest/Jest/Supertest) when explicitly requested.
 
-### 1. **Testing Approach**
-- Unit tests for validation logic
-- Integration tests for full API flow
-- Edge case coverage
-- Error scenario testing
+## Python Test Strategy
 
-### 2. **Tools** (choose based on project)
-- **Vitest** - Fast, modern (recommended for new projects)
-- **Jest** - Established, widely used
-- **Supertest** - HTTP assertions
-- **MSW** - API mocking
+### 1) Test layers
+- Unit tests for validators/services.
+- Integration tests for full route behavior.
+- Security tests for auth and permission boundaries.
 
-### 3. **Test Coverage**
+### 2) Core scenarios
+- Happy path (valid request/expected response).
+- Validation failures (schema/type/missing fields).
+- Authentication and authorization failures.
+- Error paths (upstream timeout, DB failure, unexpected exception).
+- Concurrency or idempotency edge cases when relevant.
 
-**Happy Paths**
-- Valid inputs return expected results
-- Proper status codes
-- Correct response structure
+### 3) Test quality requirements
+- Arrange-Act-Assert structure.
+- Independent tests with clean fixtures.
+- Deterministic assertions and explicit status/body checks.
 
-**Error Paths**
-- Invalid input validation
-- Authentication failures
-- Rate limiting
-- Server errors
-- Missing required fields
+## Output Requirements
 
-**Edge Cases**
-- Empty requests
-- Malformed JSON
-- Large payloads
-- Special characters
-- SQL injection attempts
-- XSS attempts
+Generate:
+1. `tests/test_<endpoint>.py` with complete scenarios.
+2. Shared fixtures (`conftest.py`) as needed.
+3. Mock/stub guidance for external dependencies.
+4. Command examples:
+   - `uv run pytest -q`
+   - `uv run pytest --maxfail=1 --disable-warnings`
 
-### 4. **Test Structure**
-
-```typescript
-describe('API Endpoint', () => {
-  describe('Success Cases', () => {
-    it('should handle valid request', () => {})
-    it('should return correct status code', () => {})
-  })
-
-  describe('Validation', () => {
-    it('should reject invalid input', () => {})
-    it('should validate required fields', () => {})
-  })
-
-  describe('Error Handling', () => {
-    it('should handle server errors', () => {})
-    it('should return proper error format', () => {})
-  })
-})
-```
-
-### 5. **What to Generate**
-
-1. **Test File** - Complete test suite with all scenarios
-2. **Mock Data** - Realistic test fixtures
-3. **Helper Functions** - Reusable test utilities
-4. **Setup/Teardown** - Database/state management
-5. **Quick Test Script** - npm script to run tests
-
-## Key Testing Principles
-
--  Test behavior, not implementation
--  Clear, descriptive test names
--  Arrange-Act-Assert pattern
--  Independent tests (no shared state)
--  Fast execution (<5s for unit tests)
--  Realistic mock data
--  Test error messages
-- L Don't test framework internals
-- L Don't mock what you don't own
-- L Avoid brittle tests
-
-## Additional Scenarios to Cover
-
-1. **Authentication/Authorization**
-   - Valid tokens
-   - Expired tokens
-   - Missing tokens
-   - Invalid permissions
-
-2. **Data Validation**
-   - Type mismatches
-   - Out of range values
-   - SQL/NoSQL injection
-   - XSS payloads
-
-3. **Rate Limiting**
-   - Within limits
-   - Exceeding limits
-   - Reset behavior
-
-4. **Performance**
-   - Response times
-   - Large dataset handling
-   - Concurrent requests
-
-Generate production-ready tests I can run immediately with `npm test`.
+Also apply the shared checklist in `.claude/commands/shared/api-python-baseline.md`.
