@@ -94,6 +94,14 @@ cd edmunds-claude-code
 
 ## Usage Examples
 
+## Quick Paths (Avoid Cognitive Overload)
+
+Start with one path instead of all commands at once:
+
+- **Building a Python API**: `/api-new` → `/api-protect` → `/api-test`
+- **Improving code quality**: `/code-cleanup` → `/lint`
+- **Planning and research**: `/feature-plan` + `tech-stack-researcher`
+
 ### Planning a Feature
 
 ```bash

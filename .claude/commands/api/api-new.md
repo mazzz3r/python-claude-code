@@ -1,71 +1,56 @@
 ---
-description: Create a new Next.js API route with validation, error handling, and TypeScript
+description: Create a production-ready API endpoint (Python-first, stack-adaptive)
 model: claude-sonnet-4-5
 ---
 
-Create a new Next.js API route following modern best practices for solo developers.
+Create a new API endpoint with modern best practices. Prefer Python-first output by default.
 
 ## Requirements
 
 API Endpoint: $ARGUMENTS
 
-## Implementation Guidelines
+## Framework Selection Rules
 
-### 1. **Next.js 15 App Router** (Recommended)
-Use Route Handlers in `app/api/` directory with TypeScript
+1. If the user has a Python backend (FastAPI/Starlette/Django Ninja/Flask async), generate Python.
+2. If no stack is specified, default to **FastAPI + Pydantic v2**.
+3. If user explicitly asks for Next.js/TypeScript, generate that stack instead.
 
-### 2. **Validation**
-- Use Zod for runtime type validation
-- Validate input early (before DB/API calls)
-- Return clear validation error messages
+## Python-First Implementation Guidelines
 
-### 3. **Error Handling**
-- Global error handling with try/catch
-- Consistent error response format
-- Appropriate HTTP status codes
-- Never expose sensitive error details
+### 1) Endpoint structure
+- Use router-based structure (e.g. `app/api/routes/<resource>.py`).
+- Keep route handlers thin; call service layer for business logic.
 
-### 4. **TypeScript**
-- Strict typing for requests/responses
-- Shared type definitions
-- No `any` types
+### 2) Validation and typing
+- Use Pydantic v2 request/response models.
+- Validate early before DB/network calls.
+- Use explicit return types and strict typing (mypy-friendly).
 
-### 5. **Security**
-- Input sanitization
-- CORS configuration if needed
-- Rate limiting considerations
-- Authentication/authorization checks
+### 3) Async and reliability
+- Use `async def` for handlers when I/O is involved.
+- Use async DB/http clients where applicable.
+- Add timeout + retry/backoff for outbound requests.
+- Avoid blocking calls in event loop paths.
 
-### 6. **Response Format**
-```typescript
-// Success
-{ data: T, success: true }
+### 4) Security and error handling
+- Include authn/authz hook points.
+- Return consistent error envelopes.
+- Use safe error messages for clients and detailed server logs.
 
-// Error
-{ error: string, details?: unknown, success: false }
+### 5) Response contract
+```json
+{ "success": true, "data": {...} }
+{ "success": false, "error": {"code": "...", "message": "...", "details": {...}} }
 ```
 
-## Code Structure
+## Output Requirements
 
-Create a complete API route with:
+Generate:
+1. Route/handler file.
+2. Pydantic models.
+3. Service layer stub.
+4. Error handling utility or pattern.
+5. Minimal usage example (`curl` + Python client).
+6. Notes on how to run lint/type checks (`uv run ruff check .`, `uv run mypy .`).
 
-1. **Route Handler File** - `app/api/[route]/route.ts`
-2. **Validation Schema** - Zod schemas for request/response
-3. **Type Definitions** - Shared TypeScript types
-4. **Error Handler** - Centralized error handling
-5. **Example Usage** - Client-side fetch example
-
-## Best Practices to Follow
-
--  Early validation before expensive operations
--  Proper HTTP status codes (200, 201, 400, 401, 404, 500)
--  Consistent error response format
--  TypeScript strict mode
--  Minimal logic in routes (use services/utils)
--  Environment variable validation
--  Request/response logging for debugging
-- L No sensitive data in responses
-- L No database queries without validation
-- L No inline business logic (extract to services)
-
-Generate production-ready code that I can immediately use in my Next.js project.
+Also apply the shared checklist in `.claude/commands/shared/api-python-baseline.md`.
