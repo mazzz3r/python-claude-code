@@ -1,6 +1,6 @@
 # Edmund's Claude Code Setup
 
-My personal Claude Code configuration for productive web development. This plugin provides **14 slash commands** and **11 specialized AI agents** to supercharge your development workflow.
+My personal Claude Code configuration for productive Python development. This plugin provides **14 slash commands** and **11 specialized AI agents** to supercharge your development workflow, now with a Python-first setup (uv + ruff + mypy + Pydantic v2).
 
 ## Quick Install
 
@@ -86,11 +86,11 @@ cd edmunds-claude-code
 
 ## Best For
 
-- Next.js developers
-- TypeScript projects
-- Supabase users
-- React developers
-- Full-stack engineers
+- Python back-end developers
+- Projects using `uv` for environment and dependency management
+- Teams enforcing `ruff` + `mypy --strict`
+- Pydantic v2 codebases with strong typing discipline
+- Full-stack engineers who still want the existing web-focused command set
 
 ## Usage Examples
 
@@ -120,8 +120,9 @@ The tech-stack-researcher agent automatically activates and provides detailed, r
 ## Philosophy
 
 This setup emphasizes:
-- **Type Safety**: Never uses `any` types
-- **Best Practices**: Follows modern Next.js/React patterns
+- **Type Safety**: Comprehensive Python typing with strict static checks
+- **Python Tooling**: `uv`, `ruff`, and `mypy` as the default quality workflow
+- **Validation Quality**: Pydantic v2 patterns for robust input/output models
 - **Productivity**: Reduces repetitive scaffolding
 - **Research**: AI-powered tech decisions with evidence
 
