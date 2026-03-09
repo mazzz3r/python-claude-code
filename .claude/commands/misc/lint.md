@@ -1,5 +1,5 @@
 ---
-description: Run linting and fix code quality issues
+description: Run linting and fix code quality issues (Python-first with uv, ruff, and mypy)
 model: claude-sonnet-4-5
 ---
 
@@ -9,194 +9,69 @@ Run linting and fix code quality issues in the codebase.
 
 $ARGUMENTS
 
-## Lint Strategy for Solo Developers
+## Lint Strategy for Python Developers
 
-### 1. **Run Linting Commands**
+### 1. **Run the Core Commands**
 
 ```bash
-# ESLint (JavaScript/TypeScript)
-npm run lint
-npx eslint . --fix
+# Lint
+uv run ruff check .
 
-# TypeScript Compiler
-npx tsc --noEmit
+# Auto-fix lint issues
+uv run ruff check . --fix
 
-# Prettier (formatting)
-npx prettier --write .
+# Format
+uv run ruff format .
 
-# All together
-npm run lint && npx tsc --noEmit && npx prettier --write .
+# Type-check (strict)
+uv run mypy .
+
+# Full local quality gate
+uv run ruff check . --fix && uv run ruff format . && uv run mypy .
 ```
 
-### 2. **Common ESLint Issues**
+### 2. **Ruff Focus Areas**
 
-**TypeScript Errors**
+- Unused imports and variables
+- Bug-prone patterns (flake8-bugbear rules)
+- Import sorting (`I` rules)
+- Annotation quality (`ANN` rules)
+- Modern Python upgrades (`UP` rules)
+
+### 3. **Mypy Focus Areas**
+
 - Missing type annotations
-- `any` types used
-- Unused variables
-- Missing return types
+- Untyped function calls in typed contexts
+- Unsafe Optional handling
+- `Any` leaks through external APIs
+- Invalid Pydantic model usage in typed code
 
-**React/Next.js Issues**
-- Missing keys in lists
-- Unsafe useEffect dependencies
-- Unescaped entities in JSX
-- Missing alt text on images
+### 4. **Pydantic v2 Guidance**
 
-**Code Quality**
-- Unused imports
-- Console.log statements
-- Debugger statements
-- TODO comments
+- Use explicit field types everywhere
+- Prefer `BaseModel` + `Field(...)` for constraints
+- Keep validators typed and deterministic
+- Configure `mypy` with `pydantic.mypy` plugin
 
-**Best Practices**
-- No var, use const/let
-- Prefer const over let
-- No nested ternaries
-- Consistent return statements
+### 5. **Fix Priority**
 
-### 3. **Auto-Fix What You Can**
+**High Priority**
+- Type errors that can hide runtime bugs
+- Validation gaps on external input
+- Incorrect Optional / None handling
 
-**Safe Auto-Fixes**
-```bash
-# Fix formatting
-prettier --write .
+**Medium Priority**
+- Annotation coverage gaps
+- Lint warnings affecting readability/maintainability
 
-# Fix ESLint auto-fixable rules
-eslint --fix .
+**Low Priority**
+- Pure formatting nits already covered by `ruff format`
 
-# Fix import order
-eslint --fix --rule 'import/order: error' .
-```
+### 6. **What to Produce**
 
-**Manual Fixes Needed**
-- Type annotations
-- Logic errors
-- Missing error handling
-- Accessibility issues
+1. Lint report (what failed and why)
+2. Auto-fix summary (what `ruff --fix` changed)
+3. Manual fix list (type/logic issues)
+4. Suggested config improvements
 
-### 4. **Lint Configuration**
-
-**ESLint Config** (`.eslintrc.json`)
-```json
-{
-  "extends": [
-    "next/core-web-vitals",
-    "plugin:@typescript-eslint/recommended"
-  ],
-  "rules": {
-    "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/no-unused-vars": "error",
-    "no-console": "warn"
-  }
-}
-```
-
-**Prettier Config** (`.prettierrc`)
-```json
-{
-  "semi": false,
-  "singleQuote": true,
-  "tabWidth": 2,
-  "trailingComma": "es5"
-}
-```
-
-### 5. **Priority Fixes**
-
-**High Priority** (fix immediately)
-- Type errors blocking build
-- Security vulnerabilities
-- Runtime errors
-- Broken accessibility
-
-**Medium Priority** (fix before commit)
-- Missing type annotations
-- Unused variables
-- Code style violations
-- TODO comments
-
-**Low Priority** (fix when convenient)
-- Formatting inconsistencies
-- Comment improvements
-- Minor refactoring opportunities
-
-### 6. **Pre-Commit Hooks** (Recommended)
-
-**Install Husky + lint-staged**
-```bash
-npm install -D husky lint-staged
-npx husky init
-```
-
-**Configure** (`.husky/pre-commit`)
-```bash
-npx lint-staged
-```
-
-**lint-staged config** (`package.json`)
-```json
-{
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ]
-  }
-}
-```
-
-### 7. **VSCode Integration**
-
-**Settings** (`.vscode/settings.json`)
-```json
-{
-  "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  },
-  "typescript.tsdk": "node_modules/typescript/lib"
-}
-```
-
-## What to Generate
-
-1. **Lint Report** - All issues found
-2. **Auto-Fix Results** - What was automatically fixed
-3. **Manual Fix Suggestions** - Issues requiring manual intervention
-4. **Priority List** - Ordered by severity
-5. **Configuration Recommendations** - Improve lint setup
-
-## Common Fixes
-
-**Remove Unused Imports**
-```typescript
-// Before
-import { A, B, C } from 'lib'
-
-// After
-import { A, C } from 'lib'  // B was unused
-```
-
-**Add Type Annotations**
-```typescript
-// Before
-function process(data) {
-  return data.map(x => x.value)
-}
-
-// After
-function process(data: DataItem[]): number[] {
-  return data.map(x => x.value)
-}
-```
-
-**Fix Missing Keys**
-```typescript
-// Before
-{items.map(item => <div>{item.name}</div>)}
-
-// After
-{items.map(item => <div key={item.id}>{item.name}</div>)}
-```
-
-Focus on fixes that improve code quality and prevent bugs. Run linting before every commit.
+Always preserve behavior while improving type safety and consistency.

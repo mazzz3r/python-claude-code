@@ -1,7 +1,7 @@
 {
   "name": "edmunds-claude-code",
   "version": "1.0.0",
-  "description": "Edmund's personal Claude Code setup with 14 productivity commands and 11 specialized AI agents for modern web development",
+  "description": "Edmund's Claude Code setup with 14 productivity commands and 11 specialized AI agents, adapted for Python-first workflows (uv, ruff, mypy, pydantic)",
   "author": "Edmund",
   "license": "MIT",
   "commands": [
@@ -136,26 +136,35 @@
   "mcpServers": {
     "context7": {
       "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp"],
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
       "description": "Access up-to-date documentation for any library"
     },
     "playwright": {
       "command": "npx",
-      "args": ["@playwright/mcp@latest"],
+      "args": [
+        "@playwright/mcp@latest"
+      ],
       "description": "Browser automation and web testing capabilities"
     },
     "supabase": {
       "command": "npx",
-      "args": ["-y", "@supabase/mcp-server-supabase"],
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase"
+      ],
       "description": "Supabase database operations and management"
     }
   },
   "tags": [
     "productivity",
-    "nextjs",
-    "supabase",
-    "typescript",
-    "react",
+    "python",
+    "uv",
+    "ruff",
+    "mypy",
+    "pydantic",
     "api",
     "development",
     "mcp"
